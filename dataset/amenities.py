@@ -57,11 +57,12 @@ def encode_amenities_w2v(self, amenities):
     encoded_amenities = []
     for t in amenities:
         # if token in the model
-        if t in W2V: encoded_amenities.append(W2V[t])
+        if t in self.w2vModel: encoded_amenities.append(self.w2vModel[t])
 
     return np.zeros(shape=(300)) if len(encoded_amenities) == 0 else np.mean(encoded_amenities, axis=0)
 
-
+def preprocess(self, amenity):
+    amenity = amenity.lowercase()
 def encode_amenities_tf_idf(self, amenities, max_range=500, ):
     '''
     Return a vector with the encoding of tokens via tf-idf 
@@ -70,6 +71,7 @@ def encode_amenities_tf_idf(self, amenities, max_range=500, ):
     amenities['amenities'] = amenities['amenities'].apply(extract_amenities)
     encoded_amenities = []
     amenities_list = amenities['amenities'].values
+
 
     n_grams = TfidfVectorizer(
         ngram_range  = (1,1),
