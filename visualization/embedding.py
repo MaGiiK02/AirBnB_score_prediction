@@ -3,20 +3,35 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 
-# Recive a 2d matrix 1 row for elements and n embedding values
+# Receive a 2d matrix 1 row for elements and n embedding values
 # You can create it like this np.vstack(encodings.values())
-def visualize_3D(data, labels, title="Title!!!", method='tSNE', method_settings={"perplexity":30.0, "random_state":0}):
+import numpy as np
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
+import plotly.graph_objs as go
+
+
+# a function to reduce the dimensionality of the data using t-SNE or PCA
+def reduce_dimensionality(data, method='tSNE', method_settings={"perplexity":30.0, "random_state":0}):
     # Reduction
-    model = []
+    model = None
     if method == 'tSNE':
-        model = TSNE(n_components=3, perplexity=30, **method_settings)
+        model = TSNE(n_components=3, **method_settings)
     elif method == 'PCA':
         model = PCA(n_components=3, **method_settings) 
     else:
         raise Exception("Invalid method provided")
     
     reduced_vectors = model.fit_transform(data)
+    return reduced_vectors, model
 
+# a function that takes the reduced vectors and plots them in 3D
+def visualize_3D(reduced_vectors, labels, title="Title!!!"):
+    # you have to initialize the reduced vectors yourself outside this function
+    # and pass it to this function
+    if reduced_vectors is None:
+        raise Exception("Reduced vectors not provided")
+    
     # Visualization
     trace = go.Scatter3d(
         x=reduced_vectors[:,0],
@@ -52,18 +67,11 @@ def visualize_3D(data, labels, title="Title!!!", method='tSNE', method_settings=
     fig = go.Figure(data=[trace], layout=layout)
     fig.show()
 
-
-def visualize_embedding_2D(data, labels, title="Title!!!", method='tSNE', method_settings={ "random_state":0}):
-    # Reduction
-    model = []
-    if method == 'tSNE':
-        model = TSNE(n_components=3, perplexity=30, **method_settings)
-    elif method == 'PCA':
-        model = PCA(n_components=3, **method_settings) 
-    else:
-        raise Exception("Invalid method provided")
-    
-    reduced_vectors = model.fit_transform(data)
+# a function that takes the reduced vectors and plots them in 2D
+def visualize_2D(reduced_vectors, labels, title="Title!!!"):
+    # you have to initialize the reduced vectors yourself outside this function
+    if reduced_vectors is None:
+        raise Exception("Reduced vectors not provided")
     
     # Visualization
     trace = go.Scatter(
