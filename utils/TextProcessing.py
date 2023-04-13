@@ -4,7 +4,11 @@ A collection of methods to work with pure text
 import itertools
 import re
 from collections import Counter
+from nltk.tokenize import word_tokenize
+import nltk
 
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 
 def uncontract(text):    
   text = re.sub(r"(\b)([Aa]re|[Cc]ould|[Dd]id|[Dd]oes|[Dd]o|[Hh]ad|[Hh]as|[Hh]ave|[Ii]s|[Mm]ight|[Mm]ust|[Ss]hould|[Ww]ere|[Ww]ould)n't", r"\1\2 not", text)
@@ -27,3 +31,6 @@ def lowercase(text):
 
 def remove_punctuation(text):
     return re.sub(r'[^\w\s]', '', text)
+
+def tokenize(sentence):
+  return word_tokenize(sentence)

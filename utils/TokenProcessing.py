@@ -5,14 +5,13 @@ import itertools
 import string
 import re
 from collections import Counter
+import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.stem import PorterStemmer
 
 # Snipped to execute the download of nltk moule only if not present
-try:
-    nltk.data.find('corpora/wordnet')
-except LookupError:
-    nltk.download(['wordnet', 'omw-1.4'])
+nltk.download("stopwords")
+nltk.download('punkt')
 
 # Remplace urls and links tokens with the _URL placeholder
 def tokenise_URLS(tokens):
@@ -40,11 +39,6 @@ def remove_stop_words(tokens):
   stop_word_regex = '|'.join(['^{}$'.format(s) for s in stopwords.words('english')])
   stop_word_regex = re.compile(stop_word_regex)
   return list(filter(lambda t: not stop_word_regex.match(t), tokens))
-
-# Some token are related to the domain this handcrafted function deal with removing them
-# DOMAIN_TOKENS =  ['@user']
-# def remove_domain_tokens(tokens):
-#   return list(filter(lambda t: t not in DOMAIN_TOKENS, tokens))
 
 # Lemmatixe the tokens using WordNetLemmatizer
 def lemmatize(tokens):
