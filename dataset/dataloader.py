@@ -29,6 +29,7 @@ class Dataloader():
     and the comments datas.
     It loads ALL the csv files in dataframes and provides function to retrive connected data. 
     '''
+
     def __init__(self, listing_path='./listings', comments_path='./comments'):
         listing_glob_pattner = os.path.join(listing_path, './**/*.csv')
         comments_glob_pattner = os.path.join(comments_path, './**/*.csv')
@@ -38,7 +39,6 @@ class Dataloader():
 
         # load listing
         listings = [pd.read_csv(f) for f in listing_files]
-
         # load listing
         comments = [pd.read_csv(f) for f in comments_files]
 
@@ -47,22 +47,24 @@ class Dataloader():
 
     def getListings(self):
         return self.listings
-    
+
     def getComments(self):
         return self.comments
-    
+
     # Expect dataframe of comments/ single id / array of ids
     def getListingByComments(self, comments):
-        if isinstance(comments, pd.DataFrame): listings_idx = comments['listing_id']
-        elif not isinstance(comments, list): listings_idx = [comments]
+        if isinstance(comments, pd.DataFrame):
+            listings_idx = comments['listing_id']
+        elif not isinstance(comments, list):
+            listings_idx = [comments]
 
-        return self.listings[self.listings['id'].isin(listings_idx) ]
+        return self.listings[self.listings['id'].isin(listings_idx)]
 
     # Expect dataframe of listings/ single id / array of ids
     def getCommentsFromListing(self, listings):
-        if isinstance(listings, pd.DataFrame): listings_idx = listings['id']
-        elif not isinstance(listings, list): listings_idx = [listings]
+        if isinstance(listings, pd.DataFrame):
+            listings_idx = listings['id']
+        elif not isinstance(listings, list):
+            listings_idx = [listings]
 
         return self.comments[self.comments['listing_id'].isin(listings_idx)]
-
-
