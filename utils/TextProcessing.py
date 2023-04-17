@@ -66,55 +66,6 @@ def tokenize(sentence):
 # we create a function to pre process the text and we have a default value for normalization. we can change it to stemming or lemmatization
 # to check which one is better for our model
 
-# def preprocess_text(text, normalization="stemming"):
-#     # text in the list to lower
-#     text = [t.lower() for t in text]
-    
-
-#     # Replace all emojis.
-#     text = [re.sub(r'<3', '<heart>', t) for t in text]
-#     text = [re.sub(smileemoji, '<smile>', t) for t in text]
-#     text = [re.sub(sademoji, '<sadface>', t) for t in text]
-#     text = [re.sub(neutralemoji, '<neutralface>', t) for t in text]
-#     text = [re.sub(lolemoji, '<lolface>', t) for t in text]
-    
-    
-#     # split and remove the unicode characters
-#     text = [re.sub(pattern_unicode, '', t) for t in text]
-
-    
-
-#     # remove consecutive characters heyyyyy -> heyy
-#     text = [re.sub(r'(.)\1+', r'\1\1', t) for t in text]
-
-#     # Remove punctuation tokens 
-#     punctuations = set(filter(lambda t: all(c.isdigit() or c in string.punctuation for c in t), text))
-#     text = [t for t in text if t not in punctuations]
-
-
-# #     # Remove stopwords 
-#     text = [re.sub(stop_word_regex, '', t) for t in text]
-
-
-
-#     #removing shortwords smaller that 3 characters
-#     clean_tokens = [w for w in text if len(w)>=3]
-
-
-# #     Apply stemming  or lemmatization 
-    
-#     if normalization == "stemming":
-#         for i, t in enumerate(clean_tokens):        
-#             t = ps.stem(t)
-#             clean_tokens[i] = t
-
-#     else:
-#         print("lemmatization")
-#         for i, t in enumerate(clean_tokens):
-#             t = lemmatizer.lemmatize(t)
-#             clean_tokens[i] = t
-
-#     return [t for t in clean_tokens if len(t) > 0]
 
 import string
 import re
