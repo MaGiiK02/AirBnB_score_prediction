@@ -8,10 +8,15 @@ from collections import Counter
 import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.stem import PorterStemmer
+from nltk.corpus import stopwords
+
 
 # Snipped to execute the download of nltk moule only if not present
 nltk.download("stopwords")
 nltk.download('punkt')
+
+stop_words = set(stopwords.words('english'))
+
 
 # Remplace urls and links tokens with the _URL placeholder
 def tokenise_URLS(tokens):
@@ -53,3 +58,52 @@ def stemmatize(tokens):
 # Remove empty tokens
 def filter_empty(tokens):
   return list(filter(lambda t: t is not None and t != "", tokens))
+
+
+# we create a function to pre process the text and we have a default value for normalization. we can change it to stemming or lemmatization
+# to check which one is better for our model
+
+import string
+import re
+from typing import List
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+
+# Compile regex patterns once
+pattern_unicode = re.compile(r'[^\x00-\x7F]+', re.UNICODE)
+stop_word_regex = re.compile(r'\b(' + r'|'.join(stopwords.words('english')) + r')\b\s*')
+smileemoji = re.compile(u'[\U0001F600-\U0001F64F]')
+sademoji = re.compile(u'[\U0001F300-\U0001F5FF]')
+neutralemoji = re.compile(u'[\U0001F610-\U0001F61F]')
+lolemoji = re.compile(u'[\U0001F600-\U0001F600]')
+
+# Initialize lemmatizer and stemmer outside the function
+lemmatizer = WordNetLemmatizer()
+ps = PorterStemmer()
+
+def preprocess_text(text: List[str], normalization: str = "stemming") -> List[str]:
+    # Convert all text to lower case
+    text = [t.lower() for t in text]
+
+    # Replace all emojis
+    text = [re.sub(r'<3', '<heart>', t) for t in text]
+    text = [re.sub(smileemoji, '<smile>', t) for t in text]
+    text = [re.sub(sademoji, '<sadface>', t) for t in text]
+    text = [re.sub(neutralemoji, '<neutralface>', t) for t in text]
+    text = [re.sub(lolemoji, '<lolface>', t) for t in text]
+
+    # Remove unicode characters
+    text = [re.sub(pattern_unicode, '', t) for t in text]
+
+    # Remove consecutive characters
+    text = [re.sub(r'(.)\1+', r'\1\1', t) for t in text]
+
+    # Remove short words
+    clean_tokens = [w for w in text if len(w) >= 3]
+
+    # Apply stemming or lemmatization
+    if normalization == "stemming":
+        clean_tokens = [ps.stem(t) for t in clean_tokens]
+    else:
+        clean_tokens = [lemmatizer.lemmatize(t) for t in clean_tokens]
+
+    return clean_tokens
