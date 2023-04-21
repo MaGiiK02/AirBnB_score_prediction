@@ -13,7 +13,7 @@ class _MLPClassifier(nn.Module):
         self.layers=[]
         for i in range(len(layers)-1):
             layer = torch.Sequential(
-                Linear(layers[1], layers[i+1], bias=False, dtype=torch.float)
+                Linear(layers[1], layers[i+1], bias=False, dtype=torch.float),
                 ReLU()
             )
             self.layers.append(layer)
