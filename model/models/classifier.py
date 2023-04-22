@@ -2,7 +2,7 @@ import torch
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import lightning.pytorch as pl
+import pytorch_lightning as pl
 from torch.nn.modules.activation import ReLU
 from torch.nn.modules.linear import Linear
 
