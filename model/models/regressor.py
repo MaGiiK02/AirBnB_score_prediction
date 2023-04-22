@@ -63,12 +63,14 @@ class LossAccCallback(pl.Callback):
         self.train_losses = []
         self.test_losses = []
 
-    def on_train_epoch_end(self, trainer, pl_module, outputs):
-        train_loss = trainer.callback_metrics['train_loss'].item()
+        
+
+    def training_epoch_end(self, outputs):
+        train_loss = torch.stack([x['loss'] for x in outputs]).mean()
         self.train_losses.append(train_loss)
-
-    def on_test_epoch_end(self, trainer, pl_module):
-        test_loss = trainer.callback_metrics['test_loss'].item()
+        self.logger.experiment.add_scalar('Loss/Train', train_loss, self.current_epoch)
+        
+    def test_epoch_end(self, outputs):
+        test_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
         self.test_losses.append(test_loss)
-
-
+        self.logger.experiment.add_scalar('Loss/Test', test_loss, self.current_epoch)
