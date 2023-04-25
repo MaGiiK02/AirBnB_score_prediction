@@ -30,7 +30,7 @@ class Dataloader():
     It loads ALL the csv files in dataframes and provides function to retrive connected data. 
     '''
 
-    def __init__(self, listing_path='./listings', comments_path='./comments'):
+    def __init__(self, listing_path='./dataset\listings', comments_path='./dataset\comments'):
         listing_glob_pattner = os.path.join(listing_path, './**/*.csv')
         comments_glob_pattner = os.path.join(comments_path, './**/*.csv')
 
