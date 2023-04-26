@@ -30,9 +30,9 @@ class _MLPRegressor(nn.Module):
 
 
 class MLPRegressor(pl.LightningModule):
-    def __init__(self, input_dim, hidden_dim):
+    def __init__(self, input_dim, hidden_dim, model=None):
         super().__init__()
-        self.autoencoder = _MLPRegressor(input_dim, hidden_dim)
+        self.autoencoder = _MLPRegressor(input_dim, hidden_dim) if model == None else model
     
     
     def forward(self, x):
