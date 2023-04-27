@@ -6,10 +6,6 @@ import pytorch_lightning as pl
 from torch.nn.modules.activation import ReLU
 from torch.nn.modules.linear import Linear
 from torch.nn import functional as F
-
-
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 from pytorch_lightning.callbacks import Callback
@@ -30,9 +26,9 @@ class _MLPRegressor(nn.Module):
 
 
 class MLPRegressor(pl.LightningModule):
-    def __init__(self, input_dim, hidden_dim):
+    def __init__(self, input_dim, hidden_dim, model=None):
         super().__init__()
-        self.autoencoder = _MLPRegressor(input_dim, hidden_dim)
+        self.autoencoder = _MLPRegressor(input_dim, hidden_dim) if model == None else model
     
     
     def forward(self, x):
