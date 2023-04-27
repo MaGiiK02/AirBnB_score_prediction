@@ -11,7 +11,7 @@ from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 
 
-# Snipped to execute the download of nltk moule only if not present
+# Snippet to execute the download of nltk moule only if not present
 nltk.download("stopwords")
 nltk.download('punkt')
 

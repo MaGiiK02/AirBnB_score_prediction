@@ -16,3 +16,5 @@ This project have be develop on data collected from [InsideAirBnB](http://inside
 * **visualization**: contains custom modules to visualize the data.
 
 ## Running
+
+Install the eviorment

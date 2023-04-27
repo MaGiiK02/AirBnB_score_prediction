@@ -6,10 +6,6 @@ import pytorch_lightning as pl
 from torch.nn.modules.activation import ReLU
 from torch.nn.modules.linear import Linear
 from torch.nn import functional as F
-
-
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 from pytorch_lightning.callbacks import Callback
