@@ -78,14 +78,14 @@ class MLPRegressor(pl.LightningModule):
         x, y = batch
         y_hat = self.model(x)
         loss = nn.functional.mse_loss(y_hat, y.unsqueeze(1))
-        self.log('test_loss', loss, on_epoch=True)
+        self.log('test_loss', loss, on_epoch=True, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self.model(x)
         val_loss = F.mse_loss(y_hat, y)
-        self.log("val_loss", val_loss, on_epoch=True)
+        self.log("val_loss", val_loss, on_epoch=True, prog_bar=True)
         return val_loss
 
 # Define the PyTorch Lightning Trainer and Callback

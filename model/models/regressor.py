@@ -28,11 +28,11 @@ class _MLPRegressor(nn.Module):
 class MLPRegressor(pl.LightningModule):
     def __init__(self, input_dim, hidden_dim, model=None):
         super().__init__()
-        self.autoencoder = _MLPRegressor(input_dim, hidden_dim) if model == None else model
+        self.model = _MLPRegressor(input_dim, hidden_dim) if model == None else model
     
     
     def forward(self, x):
-        return self.autoencoder(x)
+        return self.model(x)
 
     def configure_optimizers(self):
         optimizer = optim.AdamW(self.parameters(), lr=1e-3)
@@ -41,25 +41,24 @@ class MLPRegressor(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        y_hat = self.autoencoder(x)
+        y_hat = self.model(x)
         loss = nn.functional.mse_loss(y_hat, y.unsqueeze(1))
-        self.log('train_loss', loss)
+        self.log('train_loss', loss, prog_bar=True)
         return loss
 
-    def test_step(self, batch, batch_idx):
+    def validation_step(self, batch, batch_idx):
         x, y = batch
-        y_hat = self.autoencoder(x)
-        loss = nn.functional.mse_loss(y_hat, y.unsqueeze(1))
-        self.log('test_loss', loss, on_epoch=True)
-        return loss
+        y_hat = self.model(x)
+        val_loss = F.mse_loss(y_hat, y)
+        self.log("val_loss", val_loss, on_epoch=True, prog_bar=True)
+        return val_loss
 
 # Define the PyTorch Lightning Trainer and Callback
 class LossAccCallback(pl.Callback):
     def __init__(self):
         self.train_losses = []
         self.test_losses = []
-
-        
+        self.val_losses = []
 
     def training_epoch_end(self, outputs):
         train_loss = torch.stack([x['loss'] for x in outputs]).mean()
@@ -70,3 +69,8 @@ class LossAccCallback(pl.Callback):
         test_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
         self.test_losses.append(test_loss)
         self.logger.experiment.add_scalar('Loss/Test', test_loss, self.current_epoch)
+
+    def validation_epoch_end(self, outputs):
+        test_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
+        self.val_losses.append(test_loss)
+        self.logger.experiment.add_scalar('Loss/Validation', test_loss, self.current_epoch)
