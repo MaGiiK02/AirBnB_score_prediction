@@ -56,7 +56,7 @@ class _MLPRegressor(nn.Module):
 
 
 class MLPRegressor(pl.LightningModule):
-    def __init__(self, numerical_in=60, embeddings_in=1536):
+    def __init__(self, numerical_in=60, embeddings_in=2048):
         super().__init__()
         self.model = _MLPRegressor(numerical_in, embeddings_in)
     
