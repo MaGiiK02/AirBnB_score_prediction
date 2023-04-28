@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pytorch_lightning.callbacks import Callback
 
-class _MLPRegressor(nn.Module):
-    def __init__(self, numerical_in=60, embeddings_in=1536):
+class _MLPClassifier(nn.Module):
+    def __init__(self, classes, numerical_in=60, embeddings_in=1536):
         super().__init__()
         
         self.numerical_in = numerical_in
@@ -35,12 +35,12 @@ class _MLPRegressor(nn.Module):
         )
 
         self.inner_concat_size = int(numerical_in/4) + int(embeddings_in/8)
-        self.regression = nn.Sequential(
+        self.classification = nn.Sequential(
             nn.Linear(self.inner_concat_size, int(self.inner_concat_size/2)), 
             nn.ReLU(),
             nn.Linear(int(self.inner_concat_size/2), int(self.inner_concat_size/4)), 
             nn.ReLU(),
-            nn.Linear(int(self.inner_concat_size/4), 1),
+            nn.Linear(int(self.inner_concat_size/4), classes),
         )
 
     def forward(self, x):
@@ -51,17 +51,20 @@ class _MLPRegressor(nn.Module):
         x_embeddings =  self.embeddings(x_embeddings)
 
         x_concat = torch.cat((x_numerical, x_embeddings), 1)
-        return self.regression(x_concat)
+        return self.classification(x_concat)
 
 
 
-class MLPRegressor(pl.LightningModule):
-    def __init__(self, numerical_in=60, embeddings_in=1536):
+class MLPClassifier(pl.LightningModule):
+    def __init__(self, classes, numerical_in=60, embeddings_in=1536):
         super().__init__()
-        self.model = _MLPRegressor(numerical_in, embeddings_in)
+        self.model = _MLPClassifier(classes, numerical_in, embeddings_in)
     
     def forward(self, x):
         return self.model(x)
+    
+    def predict(self, x):
+        return torch.argmax(self.model(x), dim=0)
 
     def configure_optimizers(self, lr=1e-6):
         optimizer = optim.AdamW(self.parameters(), lr)
@@ -70,21 +73,21 @@ class MLPRegressor(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self.model(x)
-        loss = nn.functional.mse_loss(y_hat, y.unsqueeze(1))
+        loss = nn.functional.cross_entropy(y_hat, y)
         self.log('train_loss', loss)
         return loss
 
     def test_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self.model(x)
-        loss = nn.functional.mse_loss(y_hat, y.unsqueeze(1))
+        loss = nn.functional.cross_entropy(y_hat, y)
         self.log('test_loss', loss, on_epoch=True, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self.model(x)
-        val_loss = F.mse_loss(y_hat, y)
+        val_loss = nn.functional.cross_entropy(y_hat, y)
         self.log("val_loss", val_loss, on_epoch=True, prog_bar=True)
         return val_loss
 
