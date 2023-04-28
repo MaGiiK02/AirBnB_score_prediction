@@ -159,7 +159,7 @@ class AmenitiesClustering():
 
 
 class SentenceModel():
-    def __init__(self, modelName='distilbert-base-nli-mean-tokens') -> None:
+    def __init__(self, modelName='distiluse-base-multilingual-cased-v2') -> None:
         self.model = SentenceTransformer(modelName)
 
     def encode(self, df):
